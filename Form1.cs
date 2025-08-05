@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static WinLock.Form1;
-
+using System.Diagnostics;
 namespace WinLock
 {
     public partial class Form1 : Form
@@ -79,6 +79,7 @@ namespace WinLock
                 timer1.Stop();           // 先停止
                 timer1.Dispose();        // 释放资源
                 timer1 = null;           // 可选：置空引用
+                DoShell(true);
             }
             else
             {
@@ -175,6 +176,7 @@ namespace WinLock
                     timer1.Stop();           // 先停止
                     timer1.Dispose();        // 释放资源
                     timer1 = null;           // 可选：置空引用
+                    DoShell();
                     return;
                 }
                 date.hour = (int)numericUpDown1.Value;
@@ -252,6 +254,38 @@ namespace WinLock
             }
 
           
+
+        }
+
+        public void DoShell(bool Cancel=false)
+        {
+            if (Cancel) { 
+                Process.Start("shutdown", "/a");
+            }
+            else
+            {
+                if (opt == 1)
+                {
+                    Process.Start("shutdown", "/s /t 0 /f");
+                }
+                else if (opt == 2)
+                {
+                    Process.Start("shutdown", "/r /t 0");
+                }
+                else if (opt == 3)
+                {
+                    Process.Start("shutdown", "/l /t 0");
+                }
+                else if (opt == 4)
+                {
+                    Process.Start("shutdown", "/h /t 0");
+                }
+                else if (opt == 5)
+                {
+                    Process.Start("shutdown", "/s /t 0");
+                }
+            }
+           
 
         }
 

@@ -262,7 +262,7 @@ namespace WinLock
             // panel1
             // 
             this.panel1.Controls.Add(this.label4);
-            this.panel1.Location = new System.Drawing.Point(13, 180);
+            this.panel1.Location = new System.Drawing.Point(13, 176);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(228, 39);
             this.panel1.TabIndex = 9;
