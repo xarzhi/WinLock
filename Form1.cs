@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static WinLock.Form1;
-using System.Diagnostics;
 namespace WinLock
 {
     public partial class Form1 : Form
@@ -21,7 +22,7 @@ namespace WinLock
         public long timestampSeconds = 0;
         public long leftTime = 0;
 
-        Timer timer1 = null;
+        Timer timer1 = null;  // 初始化 Timer
         public struct Date
         {
             public int year;
@@ -76,9 +77,11 @@ namespace WinLock
             {
                 panel1.Visible = false;
                 SetEnable(true);
-                timer1.Stop();           // 先停止
-                timer1.Dispose();        // 释放资源
-                timer1 = null;           // 可选：置空引用
+                if (timer1 != null) {
+                    timer1.Stop();           // 先停止
+                    timer1.Dispose();        // 释放资源
+                    timer1 = null;           // 可选：置空引用
+                }
                 DoShell(true);
             }
             else
@@ -149,10 +152,12 @@ namespace WinLock
 
 
                     string text = "距离"+ yearStr+"年"+ monthStr + "月"+ dayStr + "日" + 
-                        " " + hourStr+ ":" + minuteStr+":"+ secondStr+ (Option)opt+"\n" +"还有"+ daysStr + "天"+ hoursStr + "时"+ minutesStr + "分"+ secondsStr + "秒";
+                        " " + hourStr+ ":" + minuteStr+":"+ secondStr+ (Option)opt+"\n" +
+                        "还有"+ daysStr + "天"+ hoursStr + "时"+ minutesStr + "分"+ secondsStr + "秒";
                         
                     label4.Text = text;
                 }
+
                 timer1 = new Timer();
                 timer1.Interval = 1000;
                 timer1.Enabled = true;
@@ -171,11 +176,14 @@ namespace WinLock
             if (timeOpt == 1)
             {
                 leftTime -= 1;
-                if (leftTime < 0)
+                if (leftTime <= 0)
                 {
-                    timer1.Stop();           // 先停止
-                    timer1.Dispose();        // 释放资源
-                    timer1 = null;           // 可选：置空引用
+                    if (timer1 != null)
+                    {
+                        timer1.Stop();           // 先停止
+                        timer1.Dispose();        // 释放资源
+                        timer1 = null;           // 可选：置空引用
+                    }
                     DoShell();
                     return;
                 }
@@ -228,11 +236,14 @@ namespace WinLock
                 long nowTimestamp = new DateTimeOffset(utcNow).ToUnixTimeSeconds();
 
                 long lastTimestamp = timestampSeconds - nowTimestamp;
-                if (lastTimestamp < 0)
+                if (lastTimestamp <= 0)
                 {
-                    timer1.Stop();           // 先停止
-                    timer1.Dispose();        // 释放资源
-                    timer1 = null;           // 可选：置空引用
+                    if (timer1 != null)
+                    {
+                        timer1.Stop();           // 先停止
+                        timer1.Dispose();        // 释放资源
+                        timer1 = null;           // 可选：置空引用
+                    }
                     return;
                 }
 
@@ -257,35 +268,47 @@ namespace WinLock
 
         }
 
+        [DllImport("user32.dll")]
+        public static extern bool LockWorkStation();
         public void DoShell(bool Cancel=false)
         {
-            if (Cancel) { 
+            if (Cancel)
+            {
                 Process.Start("shutdown", "/a");
             }
             else
             {
-                if (opt == 1)
+                try
                 {
-                    Process.Start("shutdown", "/s /t 0 /f");
+                    if (opt == 1)       // 关机
+                    {
+                        Process.Start("shutdown", "/s /t 0 /f");
+                    }
+                    else if (opt == 2)       // 重启
+                    {
+                        Process.Start("shutdown", "/r /t 0");
+                    }
+                    else if (opt == 3)       // 注销
+                    {
+                        Process.Start("shutdown", "/l");
+                    }
+                    else if (opt == 4)       // 睡眠
+                    {
+                        Process.Start("shutdown", "/h");
+                    }
+                    else if (opt == 5)       // 锁定
+                    {
+                        LockWorkStation();
+                    }
                 }
-                else if (opt == 2)
+                catch (Exception e)
                 {
-                    Process.Start("shutdown", "/r /t 0");
-                }
-                else if (opt == 3)
-                {
-                    Process.Start("shutdown", "/l /t 0");
-                }
-                else if (opt == 4)
-                {
-                    Process.Start("shutdown", "/h /t 0");
-                }
-                else if (opt == 5)
-                {
-                    Process.Start("shutdown", "/s /t 0");
+                    {
+                        MessageBox.Show($"操作失败: {e.Message}");
+                    }
+
                 }
             }
-           
 
         }
 

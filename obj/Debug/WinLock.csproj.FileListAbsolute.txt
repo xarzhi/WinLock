@@ -8,7 +8,6 @@ C:\Users\Administrator\Desktop\WinLock\obj\Debug\WinLock.csproj.GenerateResource
 C:\Users\Administrator\Desktop\WinLock\obj\Debug\WinLock.csproj.CoreCompileInputs.cache
 C:\Users\Administrator\Desktop\WinLock\obj\Debug\WinLock.exe
 C:\Users\Administrator\Desktop\WinLock\obj\Debug\WinLock.pdb
-C:\Users\Administrator\Desktop\WinLock\obj\Debug\WinLock.exe.config
 C:\Users\22357\Desktop\WinLock\bin\Debug\WinLock.exe.config
 C:\Users\22357\Desktop\WinLock\bin\Debug\WinLock.exe
 C:\Users\22357\Desktop\WinLock\bin\Debug\WinLock.pdb
